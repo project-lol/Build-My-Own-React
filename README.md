@@ -38,3 +38,32 @@ function createTextElement(text) {
   }
 }
 ```
+
+<br>
+
+### render 함수
+
+- 다음은 render 함수를 만든다. 이 render 함수는 렌더 트리를 DOM에 반영하는 함수이다.
+- 자식 노드가 있으면 재귀적으로 render 함수를 호출한다.
+- 만약 받아온 element가 text node라면, textContent를 설정한다.
+- 만약 받아온 element가 일반 노드라면, 속성을 설정한다. 속성을 설정할 때는 props의 key를 순회하면서, key가 children이 아니라면 해당 key에 해당하는 값을 설정한다.
+
+```js
+function render(element, container) {
+  const dom =
+    element.type == "TEXT_ELEMENT"
+      ? document.createTextNode("")
+      : document.createElement(element.type)
+
+  const isProperty = key => key !== "children"
+  Object.keys(element.props)
+    .filter(isProperty)
+    .forEach(name => {
+      dom[name] = element.props[name]
+    })
+
+  element.props.children.forEach(child => render(child, dom)) // recursive
+
+  container.appendChild(dom)
+}
+```
