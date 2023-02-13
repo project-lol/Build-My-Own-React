@@ -139,3 +139,12 @@ Didact.render(
 - 대신에 우리는 fiberTree의 root를 계속해서 추적할 것이다. 우리는 이것을 work of progress root라고 부르거나, wipRoot라고 부른다.
 - 이 모든 작업이 끝나고 나면, 우리는 이 전체 fiber tree를 commit해야 한다. 이것은 우리가 실제로 dom에 변화를 주는 작업이다.
 - 이것을 commitRoot에서 실행한다.
+
+<br>
+
+### Reconciliation
+
+- 지금까지 우리는 Dom에 새로운 노드를 추가하는 작업을 해왔다. 그런데, update나 delete 같은건 어떻게 할 것인가?
+- 이것을 위해서 우리는 render 함수에게서 받은 요소를 마지막에 fiber tree가 Dom에 commit 했던 요소와 비교할 것이다.
+- 때문에 우리는 이전에 commit한 fiber tree를 저장해둘 필요가 있다. 그리고 이것을 currentRoot라고 부를 것이다.
+- 또한 우리는 alternate 속성을 모든 fiber에 추가할 것이다. 이것은 이전 fiber tree의 fiber를 가리키는 포인터이다.
