@@ -98,3 +98,34 @@ function performUnitOfWork(nextUnitOfWork) {
   // TODO
 }
 ```
+
+<br>
+
+### Fiber
+
+- units of work를 만들기 위해서, fiber라는 자료구조를 만들어볼 것이다. 우리는 하나의 element마다 하나의 fiber를 가지게 될 것이고, 이 fiber는 하나의 unit of work가 될 것이다.
+
+```js
+Didact.render(
+  <div>
+    <h1>
+      <p />
+      <a />
+    </h1>
+    <h2 />
+  </div>,
+  container
+)
+```
+
+- 만약 이런 element tree가 있다고 하자. 그러면 우리의 render함수는 가장 먼저 root fiber를 만들 것이고, 그것을 nextUnitOfWork로 설정할 것이다. 그리고 나머지 작업들은 performUnitOfWork에서 처리할 것이다.
+- 각각의 fiber마다 하게 될 3가지 일이 있다.
+  - element를 DOM에 추가한다.
+  - element의 자식을 위한 fiber를 만든다.
+  - 다음 unit of work을 선택한다.
+- 이런 자료구조의 주된 목적은 next unit of work를 쉽게 찾기 위한 것이다. 이것을 위해서 각각의 fiber가 그들의 첫번째 자식과 연결되어 있고, 그것들이 형제들 그리고 부모와 연결되어 있는 것이다.
+- perform of work를 끝냈을 때, child가 남아있다면 그 child가 바로 next unit of work가 될 것이다. 예를 들어서, 위의 예시를 볼 때, h1에 대한 perform of work가 끝나면, next unit of work는 h1이 될 것이다.
+- 만약 fiber가 자식을 가지고 있지 않다면, 그 다음 실행 요소는 sibling이 될 것이다. 예를 들어 p는 더 이상 child를 가지고 있지 않기 때문에, sibling에 해당하는 a가 next unit of work가 될 것이다.
+- 그리고 fiber가 자식도 안가지고 있고, 형제도 안가지고 있다면 삼촌에게 갈 것이다. a와 h2의 관계와 같다.
+- 또한 만약 부모가 sibling을 가지고 있지 않다면, 그 부모의 부모에게 갈 것이다. 여기서 또 반복해서 형제를 탐색하고, 형제가 없다면 삼촌에게 갈 것이다.
+- 그렇게 root에 닿는다면, 더 이상 next unit of work가 없기 때문에, render함수가 할 일은 끝난 것이다.
